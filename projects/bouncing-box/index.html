@@ -19,6 +19,7 @@
 		}
 		.board{
 			height: 100vh;
+			background-color:cornflowerblue
 		}
 	</style>
 	<!-- 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
@@ -42,10 +43,17 @@
 			var boardWidth = board.width();	// the maximum X-Coordinate of the screen
 
 			// Every 50 milliseconds, call the update Function (see below)
-			setInterval(update, 50);
+			var interval = setInterval(update, 50);
 			
 			// Every time the box is clicked, call the handleBoxClick Function (see below)
 			box.on('click', handleBoxClick);
+			board.on('click', handleBoardClick);
+
+			function endGame() {
+
+				clearInterval(interval);
+
+			}
 
 			// moves the Box to a new position on the screen along the X-Axis
 			function moveBoxTo(newPositionX, newPositionY) {
@@ -70,12 +78,17 @@
 				var speedY = 10;
 				var positionY = 0;
 				var boardHeight = jQuery(window).height();
-				var randNum = Math.random() * boardWidth; 
+				var randX = Math.random() * boardWidth;
+				var randY = Math.random() * boardHeight; 
+				var misclicks = 0;
 			/* 
 			This Function will be called 20 times/second. Each time it is called,
 			it should move the Box to a new location. If the box drifts off the screen
 			turn it around! 
 			*/
+
+			
+
 			function update() {
 				// Increase positionX by 10
 				moveBoxTo(positionX, positionY);
@@ -108,21 +121,41 @@
 
 			};
 
+
+			function handleBoardClick() {
+
+				misclicks++;
+				if (misclicks === 10) {
+				
+					endGame();
+
+				}
+
+			}
+
 			/* 
 			This Function will be called each time the box is clicked. Each time it is called,
 			it should increase the points total, increase the speed, and move the box to
 			the left side of the screen.
 			*/
+			
+			
 			function handleBoxClick() {
 				
+				var randColor = getRandomColor();
+				randX = Math.random() * boardWidth;
+				randY = Math.random() * boardHeight;
+				positionX = randX;
+				positionY = randY;
 
-				positionX = randNum;
-				positionY = randNum;
-				randNum = Math.random() * 100;
-
-				points = points + 1;
-				speed = speed + 3;
+				points++;
 				changeBoxText(points);
+				box.css('background-color', randColor);
+
+				if (points % 3 === 0) {
+
+					speed = speed + 3;
+
 				if (speed > 0) {
 
 					speed = speed + 3;
@@ -143,7 +176,20 @@
 
 				}
 
+			}
+
 			};
+
+			function getRandomColor() {
+
+				var randR = Math.random() * 255;
+				var randG = Math.random() * 255;
+				var randB = Math.random() * 255;
+
+				var colorStr = "rgb(" + randR + ", " + randG + ", " + randB + ")";
+				return colorStr;
+			}
+
 		})();
 	</script>
 </body>
